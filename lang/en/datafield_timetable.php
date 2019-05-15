@@ -16,5 +16,5 @@ $string['activitiescount'] = '{$a} activities';
 $string['fromto'] = '{$a->from} to {$a->to}';
 
 $string['alerttimeinvalid'] = 'Invalid time';
-$string['alerttimeconflicts'] = 'Time overlaps with another activities';
+$string['alerttimeconflicts'] = 'Overlaps with another activity';
 
