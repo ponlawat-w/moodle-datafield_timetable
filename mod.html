@@ -1,0 +1,41 @@
+<table width="100%" cellpadding="5">
+    <tr>
+        <td class="c0"><label for="name"><?php echo get_string('fieldname', 'data'); ?></label></td>
+        <td class="c1"><input class="fieldname" type="text" name="name" id="name" value="<?php p($this->field->name); ?>" /></td>
+    </tr>
+    <tr>
+        <td class="c0"><label for="description"><?php echo get_string('fielddescription', 'data'); ?></label></td>
+        <td class="c1"><input class="fielddescription" type="text" name="description" id="description" value="<?php p($this->field->description); ?>" /></td>
+    </tr>
+    <tr>
+        <td class="c0"><label for="required"><?php echo get_string('requiredfield', 'data'); ?></label></td>
+        <td class="c1"><input class="requiredfield" type="checkbox" name="required" id="required" <?php p($this->field->required?"checked=\"checked\"":""); ?>/></td>
+    </tr>
+    <tr>
+        <td class="c0"><?php echo get_string('timestep', 'datafield_timetable'); ?></td>
+        <td class="c1">
+            <select title="<?php echo get_string('timestep', 'datafield_timetable'); ?>" name="<?php echo DATAFIELD_TIMETABLE_COLUMN_FIELD_TIME_STEP; ?>">
+                <option value="1"<?php p($this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_TIME_STEP}==1?' selected':''); ?>>1 minute</option>
+                <option value="5"<?php p($this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_TIME_STEP}==5?' selected':''); ?>>5 minutes</option>
+                <option value="15"<?php p($this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_TIME_STEP}==15?' selected':''); ?>>15 minutes</option>
+                <option value="30"<?php p($this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_TIME_STEP}==30?' selected':''); ?>>30 minutes</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td class="c0" style="vertical-align: top;"><?php echo get_string('categories', 'datafield_timetable'); ?></td>
+        <td class="c1">
+            <div id="datafield_timetable-categories">
+                <div class="datafield_timetable-category_template">
+                    <input title="<?php echo get_string('category', 'datafield_timetable'); ?>" type="text" class="datafield_timetable-category_input" data-id="0">
+                    <button type="button" class="btn btn-sm btn-danger datafield_timetable-delete_btn">
+                        ×
+                    </button>
+                </div>
+            </div>
+            <button type="button" id="datafield_timetable-add_btn" class="btn btn-sm btn-success">Add Category</button>
+        </td>
+    </tr>
+</table>
+<input type="hidden" name="required" value="1">
+<input type="hidden" name="<?php echo DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES; ?>" id="datafield_timetable-categories_data" value="<?php echo $this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES}; ?>">
