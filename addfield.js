@@ -3,7 +3,7 @@ require(['jquery'], $ => {
         const $timetables = $('.datafield_timetable-timetable');
         for (let t = 0; t < $timetables.length; t++) {
             const $timetable = $($timetables[t]);
-            const fieldId = $timetable.attr('data-fieldid');
+            const fieldid = $timetable.attr('data-fieldid');
 
             const $tbody = $timetable.find('.datafield_timetable-tbody');
             const $template = $tbody.find('.datafield_timetable-slot_template');
@@ -27,11 +27,11 @@ require(['jquery'], $ => {
                 return false;
             };
 
-            const getMaxTime = () => data.filter(c => c.valid).reduce((prev, curr) => curr.to > prev ? curr.to : prev, 0);
+            const getmaxtime = () => data.filter(c => c.valid).reduce((prev, curr) => curr.to > prev ? curr.to : prev, 0);
 
             const formatcategories = categories => categories.map(cat => `${cat.id}=${cat.value}`).join(',');
 
-            const updateData = () => {
+            const udpatedata = () => {
                 data = [];
                 const $slots = $tbody.find('.datafield_timetable-slot');
                 for (let s = 0; s < $slots.length; s++) {
@@ -91,39 +91,39 @@ require(['jquery'], $ => {
                 console.log($data.val());
             };
 
-            const addActivity = (from = 0, to = 0, activity = '', categories = [], autofocus = true) => {
-                const $newSlot = $template.clone();
-                const $deleteBtn = $newSlot.find('.datafield_timetable-delete_btn');
-                const $fromHourSelect = $newSlot.find('.datafield_timetable-fromhourselect');
-                const $fromMinuteSelect = $newSlot.find('.datafield_timetable-fromminuteselect');
-                const $toHourSelect = $newSlot.find('.datafield_timetable-tohourselect');
-                const $toMinuteSelect = $newSlot.find('.datafield_timetable-tominuteselect');
-                const $activityInput = $newSlot.find('.datafield_timetable-activityinput');
-                const $categoryselects = $newSlot.find('.datafield_timetable-categoryselect');
+            const addactivity = (from = 0, to = 0, activity = '', categories = [], autofocus = true) => {
+                const $newslot = $template.clone();
+                const $deletebtn = $newslot.find('.datafield_timetable-delete_btn');
+                const $fromhourselect = $newslot.find('.datafield_timetable-fromhourselect');
+                const $fromminuteselect = $newslot.find('.datafield_timetable-fromminuteselect');
+                const $tohourselect = $newslot.find('.datafield_timetable-tohourselect');
+                const $tominuteselect = $newslot.find('.datafield_timetable-tominuteselect');
+                const $activityinput = $newslot.find('.datafield_timetable-activityinput');
+                const $categoryselects = $newslot.find('.datafield_timetable-categoryselect');
 
-                let fromHour = 0;
-                let fromMinute = 0;
+                let fromhour = 0;
+                let fromminute = 0;
                 if (from) {
-                    fromHour = Math.floor(from / 60) % 24;
-                    fromMinute = from % 60;
+                    fromhour = Math.floor(from / 60) % 24;
+                    fromminute = from % 60;
                 } else {
-                    const maxTime = getMaxTime();
-                    fromHour = Math.floor(maxTime / 60);
-                    fromMinute = maxTime % 60;
+                    const maxTime = getmaxtime();
+                    fromhour = Math.floor(maxTime / 60);
+                    fromminute = maxTime % 60;
                 }
 
-                $fromHourSelect.val(fromHour);
-                $fromMinuteSelect.val(fromMinute);
+                $fromhourselect.val(fromhour);
+                $fromminuteselect.val(fromminute);
 
                 if (to) {
-                    const toHour = Math.floor(to / 60) % 24;
-                    const toMinute = to % 60;
-                    $toHourSelect.val(toHour);
-                    $toMinuteSelect.val(toMinute);
+                    const tohour = Math.floor(to / 60) % 24;
+                    const tominute = to % 60;
+                    $tohourselect.val(tohour);
+                    $tominuteselect.val(tominute);
                 }
 
                 if (activity) {
-                    $activityInput.val(activity);
+                    $activityinput.val(activity);
                 }
 
                 if (categories && categories.length) {
@@ -137,24 +137,24 @@ require(['jquery'], $ => {
                     }
                 }
 
-                $deleteBtn.click(() => {
-                    $newSlot.remove();
-                    updateData();
+                $deletebtn.click(() => {
+                    $newslot.remove();
+                    udpatedata();
                 });
 
-                $newSlot.find('input,select').change(() => {
-                    updateData();
+                $newslot.find('input,select').change(() => {
+                    udpatedata();
                 });
 
-                $newSlot.removeClass('datafield_timetable-slot_template')
+                $newslot.removeClass('datafield_timetable-slot_template')
                     .addClass('datafield_timetable-slot')
                     .appendTo($tbody)
                     .show();
 
-                updateData();
+                udpatedata();
 
                 if (autofocus) {
-                    $fromHourSelect.focus();
+                    $fromhourselect.focus();
                 }
             };
 
@@ -174,7 +174,7 @@ require(['jquery'], $ => {
                 const rows = $data.val().split('\n').map(d => d.split(';')).filter(d => d.length === 4);
                 for (let r = 0; r < rows.length; r++) {
                     const row = rows[r];
-                    addActivity(
+                    addactivity(
                         parseInt(row[0]),
                         parseInt(row[1]),
                         decodeURI(row[2]),
@@ -187,7 +187,7 @@ require(['jquery'], $ => {
             $template.hide();
 
             $addBtn.click(() => {
-                addActivity();
+                addactivity();
             });
 
             initialize();
