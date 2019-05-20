@@ -87,8 +87,6 @@ require(['jquery'], $ => {
                     .sort((d1, d2) => d1.from - d2.from)
                     .map(d => `${d.from};${d.to};${encodeURI(d.activity)};${formatcategories(d.categories)}`)
                     .join('\n'));
-
-                console.log($data.val());
             };
 
             const addactivity = (from = 0, to = 0, activity = '', categories = [], autofocus = true) => {
