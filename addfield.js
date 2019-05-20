@@ -29,6 +29,8 @@ require(['jquery'], $ => {
 
             const getMaxTime = () => data.filter(c => c.valid).reduce((prev, curr) => curr.to > prev ? curr.to : prev, 0);
 
+            const formatcategories = categories => categories.map(cat => `${cat.id}=${cat.value}`).join(',');
+
             const updateData = () => {
                 data = [];
                 const $slots = $tbody.find('.datafield_timetable-slot');
@@ -39,7 +41,15 @@ require(['jquery'], $ => {
                     const to = (parseInt($slot.find('.datafield_timetable-tohourselect').val()) * 60) +
                         parseInt($slot.find('.datafield_timetable-tominuteselect').val());
                     const activity = $slot.find('.datafield_timetable-activityinput').val().trim();
-                    const category = $slot.find('.datafield_timetable-categoryselect').val();
+                    const $categoryselects = $slot.find('.datafield_timetable-categoryselect');
+                    const categories = [];
+                    for (let c = 0; c < $categoryselects.length; c++) {
+                        const $category = $($categoryselects[c]);
+                        categories.push({
+                            id: parseInt($category.attr('data-id')),
+                            value: parseInt($category.val())
+                        });
+                    }
 
                     const timeinvalid = from >= to;
                     const timeconflicts = conflicts(from, to);
@@ -49,7 +59,7 @@ require(['jquery'], $ => {
                         from: from,
                         to: to,
                         activity: activity,
-                        category: category,
+                        categories: categories,
                         valid: !timeinvalid && !timeconflicts && !inputrequired
                     });
 
@@ -75,11 +85,13 @@ require(['jquery'], $ => {
                 $data.val(data
                     .filter(d => d.valid)
                     .sort((d1, d2) => d1.from - d2.from)
-                    .map(d => `${d.from};${d.to};${encodeURI(d.activity)};${d.category}`)
+                    .map(d => `${d.from};${d.to};${encodeURI(d.activity)};${formatcategories(d.categories)}`)
                     .join('\n'));
+
+                console.log($data.val());
             };
 
-            const addActivity = (from = 0, to = 0, activity = '', category = 0, autofocus = true) => {
+            const addActivity = (from = 0, to = 0, activity = '', categories = [], autofocus = true) => {
                 const $newSlot = $template.clone();
                 const $deleteBtn = $newSlot.find('.datafield_timetable-delete_btn');
                 const $fromHourSelect = $newSlot.find('.datafield_timetable-fromhourselect');
@@ -87,7 +99,7 @@ require(['jquery'], $ => {
                 const $toHourSelect = $newSlot.find('.datafield_timetable-tohourselect');
                 const $toMinuteSelect = $newSlot.find('.datafield_timetable-tominuteselect');
                 const $activityInput = $newSlot.find('.datafield_timetable-activityinput');
-                const $categorySelect = $newSlot.find('.datafield_timetable-categoryselect');
+                const $categoryselects = $newSlot.find('.datafield_timetable-categoryselect');
 
                 let fromHour = 0;
                 let fromMinute = 0;
@@ -114,8 +126,15 @@ require(['jquery'], $ => {
                     $activityInput.val(activity);
                 }
 
-                if (category) {
-                    $categorySelect.val(category);
+                if (categories && categories.length) {
+                    for (let c = 0; c < $categoryselects; c++) {
+                        const $category = $($categoryselects[c]);
+                        const id = parseInt($category.attr('data-id'));
+                        const categorydata = categories.filter(c => parseInt(c.id) === id);
+                        if (categorydata.length) {
+                            $category.val(categorydata[0].value);
+                        }
+                    }
                 }
 
                 $deleteBtn.click(() => {
@@ -139,11 +158,29 @@ require(['jquery'], $ => {
                 }
             };
 
+            const parserawcategories = rawcategory => {
+                const raw = rawcategory.split('=');
+                if (raw === 2) {
+                    return {
+                        id: parseInt(raw[0]),
+                        value: parseInt(raw[1])
+                    };
+                }
+
+                return null;
+            };
+
             const initialize = () => {
                 const rows = $data.val().split('\n').map(d => d.split(';')).filter(d => d.length === 4);
                 for (let r = 0; r < rows.length; r++) {
                     const row = rows[r];
-                    addActivity(parseInt(row[0]), parseInt(row[1]), decodeURI(row[2]), row[3], false);
+                    addActivity(
+                        parseInt(row[0]),
+                        parseInt(row[1]),
+                        decodeURI(row[2]),
+                        row[3].split(',').map(c => parserawcategories(c)).filter(c => c !== null),
+                        false
+                    );
                 }
             };
 

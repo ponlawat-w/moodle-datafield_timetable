@@ -23,19 +23,54 @@
         </td>
     </tr>
     <tr>
-        <td class="c0" style="vertical-align: top;"><?php echo get_string('categories', 'datafield_timetable'); ?></td>
+        <td class="c0"></td>
         <td class="c1">
-            <div id="datafield_timetable-categories">
-                <div class="datafield_timetable-category_template">
-                    <input title="<?php echo get_string('category', 'datafield_timetable'); ?>" type="text" class="datafield_timetable-category_input" data-id="0">
-                    <button type="button" class="btn btn-sm btn-danger datafield_timetable-delete_btn">
+            <button type="button" id="datafield_timetable-addcategorybtn" class="btn btn-success"><?php echo get_string('addcategory', 'datafield_timetable'); ?></button>
+        </td>
+    </tr>
+    <tbody class="datafield_timetable-categorytemplate">
+    <tr>
+        <td colspan="2">
+            <hr>
+        </td>
+    </tr>
+    <tr>
+        <td class="c0"><?php echo get_string('categoryname', 'datafield_timetable'); ?></td>
+        <td class="c1">
+            <input class="datafield_timetable-categorynameinput" title="<?php echo get_string('categoryname', 'datafield_timetable'); ?>" type="text">
+        </td>
+    </tr>
+    <tr>
+        <td class="c0" style="vertical-align: top;"><?php echo get_string('categoryitems', 'datafield_timetable'); ?></td>
+        <td class="c1">
+            <div class="datafield_timetable-categoryitems">
+                <div class="datafield_timetable-categoryitemtemplate">
+                    <input title="<?php echo get_string('category', 'datafield_timetable'); ?>" type="text" class="datafield_timetable-itemnameinput" data-id="0">
+                    <button type="button" class="btn btn-sm btn-danger datafield_timetable-deletebtn">
                         ×
                     </button>
                 </div>
             </div>
-            <button type="button" id="datafield_timetable-add_btn" class="btn btn-sm btn-success">Add Category</button>
+            <a href="javascript:void(0);" class="text-success datafield_timetable-additembtn">
+                <?php echo get_string('addcategoryitem', 'datafield_timetable'); ?>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td class="c0"></td>
+        <td class="c1">
+            <button class="btn btn-sm btn-danger datafield_timetable-deletecategorybtn">
+                <?php echo get_string('deletecategory', 'datafield_timetable'); ?>
+            </button>
+        </td>
+    </tr>
+    </tbody>
+    <tbody id="datafield_timetable-categoryinsertarea"></tbody>
+    <tr>
+        <td colspan="2">
+            <hr>
         </td>
     </tr>
 </table>
-<input type="hidden" name="required" value="1">
 <input type="hidden" name="<?php echo DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES; ?>" id="datafield_timetable-categories_data" value="<?php echo $this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES}; ?>">
+<!--<textarea id="datafield_timetable-categories_data" name="<?php echo DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES; ?>" title="" cols="60" rows="30"><?php echo $this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES}; ?></textarea>-->
