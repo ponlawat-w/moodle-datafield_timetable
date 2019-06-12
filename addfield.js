@@ -132,7 +132,7 @@ require(['jquery'], $ => {
                 }
 
                 if (categories && categories.length) {
-                    for (let c = 0; c < $categoryselects; c++) {
+                    for (let c = 0; c < $categoryselects.length; c++) {
                         const $category = $($categoryselects[c]);
                         const id = parseInt($category.attr('data-id'));
                         const categorydata = categories.filter(c => parseInt(c.id) === id);
@@ -165,7 +165,7 @@ require(['jquery'], $ => {
 
             const parserawcategories = rawcategory => {
                 const raw = rawcategory.split('=');
-                if (raw === 2) {
+                if (raw.length === 2) {
                     return {
                         id: parseInt(raw[0]),
                         value: parseInt(raw[1])
