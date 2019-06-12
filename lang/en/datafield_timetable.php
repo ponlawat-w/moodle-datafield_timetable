@@ -14,6 +14,7 @@ $string['timestep'] = 'Time Step';
 
 $string['time'] = 'Time';
 $string['activity'] = 'Activity';
+$string['categories'] = 'Categories';
 $string['addactivity'] = 'Add Activity';
 
 $string['activitycount'] = '{$a} activity';

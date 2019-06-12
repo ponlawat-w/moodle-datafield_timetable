@@ -5,8 +5,8 @@ require(['jquery'], $ => {
             const $timetable = $($timetables[t]);
             const fieldid = $timetable.attr('data-fieldid');
 
-            const $tbody = $timetable.find('.datafield_timetable-tbody');
-            const $template = $tbody.find('.datafield_timetable-slot_template');
+            const $rowbody = $timetable.find('.datafield_timetable-body');
+            const $template = $rowbody.find('.datafield_timetable-slot_template');
             $template.find(
                 '.datafield_timetable-alerttimeinvalid,.datafield_timetable-alerttimeconflicts,.datafield_timetable-alertinputrequired'
             ).hide();
@@ -33,7 +33,7 @@ require(['jquery'], $ => {
 
             const udpatedata = () => {
                 data = [];
-                const $slots = $tbody.find('.datafield_timetable-slot');
+                const $slots = $rowbody.find('.datafield_timetable-slot');
                 for (let s = 0; s < $slots.length; s++) {
                     const $slot = $($slots[s]);
                     const from = (parseInt($slot.find('.datafield_timetable-fromhourselect').val()) * 60) +
@@ -43,12 +43,19 @@ require(['jquery'], $ => {
                     const activity = $slot.find('.datafield_timetable-activityinput').val().trim();
                     const $categoryselects = $slot.find('.datafield_timetable-categoryselect');
                     const categories = [];
+                    let categoryvalid = true;
                     for (let c = 0; c < $categoryselects.length; c++) {
                         const $category = $($categoryselects[c]);
-                        categories.push({
-                            id: parseInt($category.attr('data-id')),
-                            value: parseInt($category.val())
-                        });
+                        if (!$category.val() || $category.val() === '0' || $category.val() === 0) {
+                            categoryvalid = false;
+                            $category.addClass('invalid');
+                        } else {
+                            categories.push({
+                                id: parseInt($category.attr('data-id')),
+                                value: parseInt($category.val())
+                            });
+                            $category.removeClass('invalid');
+                        }
                     }
 
                     const timeinvalid = from >= to;
@@ -60,7 +67,7 @@ require(['jquery'], $ => {
                         to: to,
                         activity: activity,
                         categories: categories,
-                        valid: !timeinvalid && !timeconflicts && !inputrequired
+                        valid: !timeinvalid && !timeconflicts && !inputrequired && categoryvalid
                     });
 
                     if ((from || to) && timeinvalid) {
@@ -146,7 +153,7 @@ require(['jquery'], $ => {
 
                 $newslot.removeClass('datafield_timetable-slot_template')
                     .addClass('datafield_timetable-slot')
-                    .appendTo($tbody)
+                    .appendTo($rowbody)
                     .show();
 
                 udpatedata();

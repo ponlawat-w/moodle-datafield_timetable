@@ -44,6 +44,7 @@ function datafield_timetable_getminuteselect($step = 30, $attr = [], $selected =
 }
 
 function datafield_timetable_gettimerangeselects($step = 30) {
+//    $sharedstyle = 'size: 0.7em; padding: 0; margin: 0;';
     $alerttimeinvalid = html_writer::div(get_string('alerttimeinvalid', 'datafield_timetable'),
         'alert alert-danger datafield_timetable-alerttimeinvalid', [
             'style' => 'padding: 2px; margin: 0;'
@@ -52,12 +53,22 @@ function datafield_timetable_gettimerangeselects($step = 30) {
         'alert alert-danger datafield_timetable-alerttimeconflicts', [
             'style' => 'padding: 2px; margin: 0;'
         ]);
-    $from = datafield_timetable_gethourselect(['class' => 'datafield_timetable-fromhourselect']) . ':'
-        . datafield_timetable_getminuteselect($step, ['class' => 'datafield_timetable-fromminuteselect']);
-    $to = datafield_timetable_gethourselect(['class' => 'datafield_timetable-tohourselect']) . ':'
-        . datafield_timetable_getminuteselect($step, ['class' => 'datafield_timetable-tominuteselect']);
 
-    return html_writer::div($from . ' ~ ' . $to) . $alerttimeinvalid . $alerttimeconflicts;
+    $fromhourattr = ['class' => 'datafield_timetable-timeselect datafield_timetable-fromhourselect'];
+    $fromminuteattr = ['class' => 'datafield_timetable-timeselect datafield_timetable-fromminuteselect'];
+    $tohourattr = ['class' => 'datafield_timetable-timeselect datafield_timetable-tohourselect'];
+    $tominuteattr = ['class' => 'datafield_timetable-timeselect datafield_timetable-tominuteselect'];
+
+    $from = datafield_timetable_gethourselect($fromhourattr) . ':'
+        . datafield_timetable_getminuteselect($step, $fromminuteattr);
+    $to = datafield_timetable_gethourselect($tohourattr) . ':'
+        . datafield_timetable_getminuteselect($step, $tominuteattr);
+
+    $fromdiv = html_writer::div($from, 'datafield_timetable-timeselect');
+    $betweendiv = html_writer::div(' ~ ', 'datafield_timetable-timebetween');
+    $todiv = html_writer::div($to, 'datafield_timetable-timeselect');
+
+    return html_writer::div($fromdiv . $betweendiv . $todiv) . $alerttimeinvalid . $alerttimeconflicts;
 }
 
 function datafield_timetable_getcategories($categories_raw) {
@@ -88,9 +99,21 @@ function datafield_timetable_getcategories($categories_raw) {
 }
 
 function datafield_timetable_getslottemplate($field, $categories) {
-    $selecttds = '';
+    $alertinputrequired = html_writer::div(get_string('required'),
+        'alert alert-danger datafield_timetable-alertinputrequired', [
+            'style' => 'padding: 2px; margin: 0;'
+        ]);
+    $input = html_writer::start_tag('input', [
+        'type' => 'text',
+        'class' => 'datafield_timetable-activityinput',
+        'placeholder' => get_string('activity', 'datafield_timetable')
+    ]);
+
+    $time = datafield_timetable_gettimerangeselects($field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_TIME_STEP});
+
+    $categoryselects = '';
     foreach ($categories as $category) {
-        $options = '';
+        $options = html_writer::tag('option', '- ' . $category['name'] . ' -', ['value' => 0]);
         foreach ($category['items'] as $item) {
             $options .= html_writer::tag('option', $item['name'], [
                 'value' => $item['id']
@@ -101,62 +124,62 @@ function datafield_timetable_getslottemplate($field, $categories) {
             'data-id' => $category['id']
         ]);
 
-        $selecttds .= html_writer::tag('td', $select);
+        $categoryselects .= html_writer::div($select);
     }
 
-    $alertinputrequired = html_writer::div(get_string('required'),
-        'alert alert-danger datafield_timetable-alertinputrequired', [
-            'style' => 'padding: 2px; margin: 0;'
-        ]);
-    $input = html_writer::start_tag('input', [
-        'type' => 'text',
-        'class' => 'datafield_timetable-activityinput'
-    ]);
-    $time = datafield_timetable_gettimerangeselects($field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_TIME_STEP});
     $delete = html_writer::tag('button', '×', [
         'type' => 'button',
         'class' => 'btn btn-danger datafield_timetable-delete_btn'
     ]);
 
-    $tdattr = [
+    $colattr = [
         'style' => 'vertical-align: top;'
     ];
 
-    $timetd = html_writer::tag('td', $time, $tdattr);
-    $inputtd = html_writer::tag('td', html_writer::div($input) . $alertinputrequired, $tdattr);
-    $deletetd = html_writer::tag('td', $delete, $tdattr);
+    $timecol = html_writer::div(
+        $time,
+        'datafield_timetable-col datafield_timetable-col_time',
+        $colattr);
+    $activitycol = html_writer::div(
+        $input . $alertinputrequired,
+        'datafield_timetable-col datafield_timetable-col_activity',
+        $colattr);
+    $categorycol = html_writer::div(
+        $categoryselects,
+        'datafield_timetable-col datafield_timetable-col_categories',
+        $colattr);
+    $deletecol = html_writer::div(
+        $delete,
+        'datafield_timetable-col datafield_timetable-col_deletebtn',
+        $colattr);
 
-    return html_writer::tag('tr', $timetd . $inputtd . $selecttds . $deletetd, [
-        'class' => 'datafield_timetable-slot_template'
-    ]);
+    return html_writer::div($timecol . $activitycol . $categorycol . $deletecol,
+        'datafield_timetable-row datafield_timetable-slot_template');
 }
 
 function datafield_timetable_getaddfield($content, $field) {
-    $categories = datafield_timetable_getcategories($field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES});
-    $categoryths = '';
-    foreach ($categories as $category) {
-        $categoryths .= html_writer::tag('th', $category['name']);
-    }
 
     $addbtn = html_writer::tag('button', get_string('addactivity', 'datafield_timetable'), [
         'type' => 'button',
         'class' => 'btn btn-success datafield_timetable-add_btn'
     ]);
 
-    $thead = html_writer::tag('thead',
-        html_writer::tag('tr',
-            html_writer::tag('th', get_string('time', 'datafield_timetable')) .
-            html_writer::tag('th', get_string('activity', 'datafield_timetable')) .
-            $categoryths .
-            html_writer::tag('th', '')
-        )
-    );
-    $tbody = html_writer::tag('tbody',
-        datafield_timetable_getslottemplate($field, $categories), [
-            'class' => 'datafield_timetable-tbody'
-        ]);
+    $headrow = html_writer::div(
+        html_writer::div(
+            html_writer::div(get_string('time', 'datafield_timetable'),
+                'datafield_timetable-col datafield_timetable-col_time') .
+            html_writer::div(get_string('activity', 'datafield_timetable'),
+                'datafield_timetable-col datafield_timetable-col_activity') .
+            html_writer::div(get_string('categories', 'datafield_timetable'),
+                'datafield_timetable-col datafield_timetable-col_categories')
+        ), 'datafield_timetable-row datafield_timetable-row_head');
 
-    $table = html_writer::tag('table', $thead . $tbody)
+    $categories = datafield_timetable_getcategories($field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES});
+    $bodyrow = html_writer::div(
+        datafield_timetable_getslottemplate($field, $categories),
+        'datafield_timetable-body');
+
+    $content = $headrow . $bodyrow
         . html_writer::div($addbtn)
         . html_writer::start_tag('input', [
             'type' => 'hidden',
@@ -164,14 +187,8 @@ function datafield_timetable_getaddfield($content, $field) {
             'name' => "field_{$field->id}",
             'value' => $content
         ]);
-//        .html_writer::tag('textarea', $content, [
-//            'class' => 'datafield_timetable-data',
-//            'name' => "field_{$field->id}",
-//            'rows' => 30,
-//            'cols' => 50
-//        ]);
 
-    return html_writer::div($table, 'datafield_timetable-timetable', [
+    return html_writer::div($content, 'datafield_timetable-timetable', [
         'data-fieldid' => $field->id
     ]);
 }

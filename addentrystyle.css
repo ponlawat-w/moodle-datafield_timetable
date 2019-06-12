@@ -1,0 +1,176 @@
+.datafield_timetable-timetable {
+    width: 100%;
+}
+
+.datafield_timetable-row {
+    display: block;
+    position: relative;
+    border-bottom: 1px solid #ededed;
+    padding: 2px 0;
+}
+
+.datafield_timetable-row_head {
+    display: none;
+}
+
+.datafield_timetable-col {
+    display: block;
+    width: 100%;
+}
+
+.datafield_timetable-timeselect, .datafield_timetable-timebetween {
+    display: inline-block;
+}
+
+.datafield_timetable-col_time {
+}
+
+.datafield_timetable-timeselect {
+    white-space: nowrap;
+}
+
+.datafield_timetable-timebetween {
+    padding: 0 2px;
+}
+
+.datafield_timetable-col_time select {
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+}
+
+.datafield_timetable-col_time select option {
+    font-size: 16px;
+}
+
+.datafield_timetable-col_activity {
+    margin-left: 10px;
+}
+
+.datafield_timetable-col_activity .alert {
+    width: 90%;
+}
+
+.datafield_timetable-col_activity input {
+    width: 90%;
+    margin: 0;
+    font-size: 16px;
+}
+
+.datafield_timetable-col_categories {
+    margin-left: 10px;
+}
+
+.datafield_timetable-col_categories select {
+    width: 100%;
+    margin: 0;
+    font-size: 16px;
+}
+
+.datafield_timetable-col_categories select.invalid {
+    color: #b94a48;
+}
+
+.datafield_timetable-col_categories option {
+    color: #555555;
+}
+
+.datafield_timetable-col_categories option[value='0'] {
+    color: #000000;
+    font-weight: bold;
+}
+
+.datafield_timetable-col_deletebtn {
+    text-align: right;
+}
+
+.datafield_timetable-col_deletebtn .btn {
+    width: 80px;
+    font-size: 1.2em;
+    padding: 4px;
+    margin: 2px 0;
+    text-align: center;
+}
+
+@media (min-width: 576px) {
+
+    .datafield_timetable-col_time select {
+        font-size: 0.9em;
+        height: 25px;
+        padding: 0;
+        margin: 0;
+    }
+
+    .datafield_timetable-col_time select option {
+        font-size: 0.9em;
+    }
+
+    .datafield_timetable-col {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+    }
+
+    .datafield_timetable-col_time {
+        width: 100%;
+    }
+
+    .datafield_timetable-col_activity {
+        width: 50%;
+    }
+
+    .datafield_timetable-col_categories {
+        margin: 0;
+        width: 40%;
+    }
+
+    .datafield_timetable-col_deletebtn {
+        text-align: right;
+    }
+
+}
+
+@media (min-width: 768px) {
+
+    .datafield_timetable-row {
+        white-space: nowrap;
+        overflow: visible;
+    }
+
+    .datafield_timetable-row_head {
+        display: block;
+    }
+
+    .datafield_timetable-col {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+    }
+
+    .datafield_timetable-col_time {
+        width: 30%;
+        white-space: normal;
+    }
+
+    .datafield_timetable-col_activity {
+        width: 30%;
+    }
+
+    .datafield_timetable-col_categories {
+        width: 25%;
+    }
+
+    .datafield_timetable-col_deletebtn {
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
+        width: 15%;
+    }
+
+    .datafield_timetable-col_deletebtn .btn {
+        width: auto;
+        font-size: 1.0em;
+        padding: 5px 12px;
+        text-align: center;
+    }
+}

@@ -28,6 +28,10 @@ class data_field_timetable extends data_field_base {
             $content = '';
         }
 
+        echo html_writer::start_tag('link', [
+            'rel' => 'stylesheet',
+            'href' => new moodle_url('/mod/data/field/timetable/addentrystyle.css')
+        ]);
         $PAGE->requires->js(new moodle_url('/mod/data/field/timetable/addfield.js'));
         return datafield_timetable_getaddfield($content, $this->field);
     }
