@@ -8,6 +8,14 @@ class data_field_timetable extends data_field_base {
 
     public function __construct($field = 0, $data = 0, $cm = 0) {
         parent::__construct($field, $data, $cm);
+        $this->copy_icon();
+    }
+
+    private function copy_icon() {
+        if (!file_exists(__DIR__ . '/../../pix/field/timetable.svg')
+            && is_writable(__DIR__ . '/../../pix/field/')) {
+            copy(__DIR__ . '/pix/icon.svg', __DIR__ . '/../../pix/field/timetable.svg');
+        }
     }
 
     function display_search_field() {
