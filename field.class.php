@@ -77,4 +77,8 @@ class data_field_timetable extends data_field_base {
         return optional_param($param, $defaults[$param], PARAM_NOTAGS);
     }
 
+    function export_text_value($record) {
+        $activities = datafield_timetable_toactivities($record->content);
+        return count($activities);
+    }
 }
