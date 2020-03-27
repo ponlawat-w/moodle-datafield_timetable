@@ -6,6 +6,11 @@ require_once(__DIR__ . '/classes/activity.class.php');
 
 const DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES = 'param1';
 const DATAFIELD_TIMETABLE_COLUMN_FIELD_TIME_STEP = 'param2';
+const DATAFIELD_TIMETABLE_COLUMN_FIELD_EXPORTSETTINGS = 'param3';
+
+const DATAFIELD_TIMETABLE_CREDIT_WORK = 'w';
+const DATAFIELD_TIMETABLE_CREDIT_BREAK = 'b';
+const DATAFIELD_TIMETABLE_CREDIT_IGNORED = 'n';
 
 function datafield_timetable_gethourselect($attr = [], $selected = null) {
     $options = '';
@@ -71,7 +76,7 @@ function datafield_timetable_gettimerangeselects($step = 30) {
     return html_writer::div($fromdiv . $betweendiv . $todiv) . $alerttimeinvalid . $alerttimeconflicts;
 }
 
-function datafield_timetable_getcategories($categories_raw) {
+function datafield_timetable_getcategories($categories_raw, $reindex = false) {
     $rows = explode(PHP_EOL, $categories_raw);
     $data = [];
     foreach ($rows as $row) {
@@ -92,6 +97,13 @@ function datafield_timetable_getcategories($categories_raw) {
                 'id' => $idraw[1],
                 'name' => urldecode($category[1])
             ];
+        }
+    }
+
+    if ($reindex) {
+        $data = array_values($data);
+        foreach ($data as $idx => $category) {
+            $data[$idx]['items'] = array_values($category['items']);
         }
     }
 
@@ -300,4 +312,89 @@ function datafield_timetable_getdisplaysingletemplate($content, $categoriesraw) 
         }
     ')
         . $table;
+}
+
+function datafield_timetable_getcreditcategories($settings, $type) {
+    $results = [];
+    foreach ($settings as $key => $value) {
+        if ($value == $type && strpos($key, 'category-') === 0) {
+            $results[] = substr($key, strlen('category-'));;
+        }
+    }
+    return $results;
+}
+
+function datafield_timetable_exportcredits($field, $settings, $csvdelimitor = ',') {
+    global $DB;
+
+    $workcategories = datafield_timetable_getcreditcategories($settings, DATAFIELD_TIMETABLE_CREDIT_WORK);
+    $breakcategories = datafield_timetable_getcreditcategories($settings, DATAFIELD_TIMETABLE_CREDIT_BREAK);
+
+    $records = $DB->get_records_sql(
+        'SELECT c.*, r.timecreated FROM {data_records} r JOIN {data_content} c ON r.id = c.recordid WHERE r.userid = ? AND c.fieldid = ? ORDER BY r.timecreated ASC'
+    , [$settings->userid, $field->id]);
+
+    $user = $DB->get_record('user', ['id' => $settings->userid]);
+    $userfullname = fullname($user);
+    $time = date('Y m d');
+    $filename = "{$field->name} - {$userfullname} - {$time}.csv";
+
+    session_write_close();
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+    echo implode($csvdelimitor, [
+        'SerialNumber',
+        'Date',
+        'Start',
+        'End',
+        'Break',
+        'WorkingHours',
+        'Credits',
+        'CumulativeWorkingHours',
+        'CumulativeCredits'
+    ]);
+
+    $i = 0;
+    $sumworking = 0;
+    $sumcredits = 0;
+    foreach ($records as $record) {
+        $activities = datafield_timetable_toactivities($record->content);
+        $start = null;
+        $end = null;
+        $breaking = 0;
+        $working = 0;
+
+        foreach ($activities as $activity) {
+            if (is_null($start) || $activity->from < $start) {
+                $start = $activity->from;
+            }
+            if (is_null($end) || $activity->to > $end) {
+                $end = $activity->to;
+            }
+
+            if ($activity->hascategories($workcategories, '-')) {
+                $working += $activity->getduration();
+            } else if ($activity->hascategories($breakcategories, '-')) {
+                $breaking += $activity->getduration();
+            }
+        }
+
+        $sumworking += $working;
+        $credit = $settings->hourpercredit ? $working / $settings->hourpercredit : 0;
+        $sumcredits += $credit;
+
+        $row = [];
+        $row[] = ++$i;
+        $row[] = userdate($record->timecreated, '%d %m %Y');
+        $row[] = Activity::gettimestring($start);
+        $row[] = Activity::gettimestring($end);
+        $row[] = $breaking;
+        $row[] = $working;
+        $row[] = $credit;
+        $row[] = $sumworking;
+        $row[] = $sumcredits;
+
+        echo PHP_EOL . implode($csvdelimitor, $row);
+    }
 }

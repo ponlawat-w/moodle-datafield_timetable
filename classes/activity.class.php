@@ -58,4 +58,26 @@ class Activity {
 
         return '';
     }
+
+    public function hascategory($categorystr, $delimiter = '-') {
+        $categorystrs = explode($delimiter, $categorystr);
+        if (count($categorystrs) != 2) {
+            return false;
+        }
+
+        if (!isset($this->categories[$categorystrs[0]])) {
+            return false;
+        }
+
+        return $this->categories[$categorystrs[0]] == $categorystrs[1];
+    }
+
+    public function hascategories($categorystrs, $delimitor = '-') {
+        foreach ($categorystrs as $categorystr) {
+            if ($this->hascategory($categorystr, $delimitor)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

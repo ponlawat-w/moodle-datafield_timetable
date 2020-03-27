@@ -23,3 +23,16 @@ $string['fromto'] = '{$a->from} to {$a->to}';
 
 $string['alerttimeinvalid'] = 'Invalid time';
 $string['alerttimeconflicts'] = 'Overlaps with another activity';
+
+$string['export'] = 'Export';
+$string['exportof'] = 'Export credits of {$a}';
+$string['exportcredits'] = 'Export Data with Credits';
+$string['exporttitle'] = 'Export Data of {$a}';
+$string['exportsettings'] = 'Export Settings';
+$string['targetuser'] = 'Target User';
+$string['creditcalculation'] = 'Credits Calculation';
+$string['hourpercredit'] = 'Hours per Credit';
+
+$string['credit_work'] = 'As work';
+$string['credit_break'] = 'As break';
+$string['credit_ignore'] = 'Ignored';

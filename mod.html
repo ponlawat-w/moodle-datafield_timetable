@@ -1,4 +1,10 @@
 <table width="100%" cellpadding="5">
+    <?php if ($fid = optional_param('fid', false, PARAM_INT)) { ?>
+        <a href="<?php echo new moodle_url('/mod/data/field/timetable/export.php', ['fid' => $fid]); ?>" class="btn btn-success">
+            <?php echo get_string('exportcredits', 'datafield_timetable'); ?>
+        </a>
+    <?php } ?>
+    <hr>
     <tbody>
         <tr>
             <td class="c0"><label for="name"><?php echo get_string('fieldname', 'data'); ?></label></td>
