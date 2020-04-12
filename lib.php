@@ -374,9 +374,9 @@ function datafield_timetable_exportcredits($field, $settings, $csvdelimitor = ',
             }
 
             if ($activity->hascategories($workcategories, '-')) {
-                $working += $activity->getduration();
+                $working += $activity->getduration() / 60;
             } else if ($activity->hascategories($breakcategories, '-')) {
-                $breaking += $activity->getduration();
+                $breaking += $activity->getduration() / 60;
             }
         }
 
