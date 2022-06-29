@@ -76,6 +76,10 @@ function datafield_timetable_gettimerangeselects($step = 30) {
     return html_writer::div($fromdiv . $betweendiv . $todiv) . $alerttimeinvalid . $alerttimeconflicts;
 }
 
+function datafield_timetable_decodeandclean($text) {
+    return str_replace("\r", '', urldecode($text));
+}
+
 function datafield_timetable_getcategories($categories_raw, $reindex = false) {
     $rows = explode(PHP_EOL, $categories_raw);
     $data = [];
@@ -89,13 +93,13 @@ function datafield_timetable_getcategories($categories_raw, $reindex = false) {
         if (count($idraw) == 1) {
             $data[$idraw[0]] = [
                 'id' => $idraw[0],
-                'name' => urldecode($category[1]),
+                'name' => datafield_timetable_decodeandclean($category[1]),
                 'items' => []
             ];
         } else if (count($idraw) == 2 && isset($data[$idraw[0]])) {
             $data[$idraw[0]]['items'][$idraw[1]] = [
                 'id' => $idraw[1],
-                'name' => urldecode($category[1])
+                'name' => datafield_timetable_decodeandclean($category[1])
             ];
         }
     }
@@ -387,8 +391,8 @@ function datafield_timetable_exportcredits($field, $settings, $csvdelimitor = ',
         $row = [];
         $row[] = ++$i;
         $row[] = userdate($record->timecreated, '%d %m %Y');
-        $row[] = Activity::gettimestring($start);
-        $row[] = Activity::gettimestring($end);
+        $row[] = \Activity::gettimestring($start);
+        $row[] = \Activity::gettimestring($end);
         $row[] = $breaking;
         $row[] = $working;
         $row[] = $credit;

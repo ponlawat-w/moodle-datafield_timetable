@@ -80,4 +80,12 @@ class Activity {
         }
         return false;
     }
+
+    public function to_export_text($categories) {
+        $items = [$this->getfromtime() . '-' . $this->gettotime(), $this->activity];
+        foreach ($categories as $categoryid => $category) {
+            $items[] = $category['name'] . ': ' . $this->getcategoryname($categories, $categoryid);
+        }
+        return implode(' / ', $items);
+    }
 }

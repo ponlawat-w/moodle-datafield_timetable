@@ -92,8 +92,20 @@ class data_field_timetable extends data_field_base {
         return optional_param($param, $defaults[$param], PARAM_NOTAGS);
     }
 
+    /**
+     * @param object $record
+     * @return string
+     */
     function export_text_value($record) {
+        if (is_string($record)) {
+            return $record;
+        }
+        $categories = datafield_timetable_getcategories($this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES});
         $activities = datafield_timetable_toactivities($record->content);
-        return count($activities);
+        $lines = [];
+        foreach ($activities as $activity) {
+            $lines[] = $activity->to_export_text($categories);
+        }
+        return implode(PHP_EOL, $lines);
     }
 }
