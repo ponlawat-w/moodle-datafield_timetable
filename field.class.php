@@ -63,6 +63,9 @@ class data_field_timetable extends data_field_base {
 
             $record = $DB->get_record('data_records', ['id' => $content->recordid]);
             $data = $DB->get_record('data', ['id' => $record->dataid]);
+            if (!$data) {
+                return $html;
+            }
             $cm = get_coursemodule_from_instance('data', $data->id);
             $context = context_module::instance($cm->id);
             if (has_capability('mod/data:exportallentries', $context)) {

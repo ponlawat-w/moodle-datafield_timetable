@@ -210,6 +210,10 @@ function datafield_timetable_getaddfield($content, $field) {
 }
 
 function datafield_timetable_toactivities($content) {
+    if (!$content) {
+        return [];
+    }
+
     $activities = [];
     $rows = explode(PHP_EOL, $content);
     foreach ($rows as $row) {
@@ -217,6 +221,11 @@ function datafield_timetable_toactivities($content) {
     }
 
     return $activities;
+}
+
+function datafield_timetable_getemptytr($categories) {
+    return html_writer::tag('tr',
+        html_writer::tag('td', get_string('empty', 'datafield_timetable'), ['colspan' => 2 + count($categories)]));
 }
 
 /**
@@ -243,10 +252,15 @@ function datafield_timetable_getactivitytr($activity, $categories) {
 
 function datafield_timetable_getdisplaylisttemplate($content) {
     $activities = datafield_timetable_toactivities($content);
+    $activitiescount = count($activities);
+    if (!$activitiescount) {
+        return get_string('empty', 'datafield_timetable');
+    }
+
     $countstr = get_string(
-        count($activities) == 1 ? 'activitycount' : 'activitiescount',
+        $activitiescount == 1 ? 'activitycount' : 'activitiescount',
         'datafield_timetable',
-        count($activities));
+        $activitiescount);
 
     $from = 1440;
     $to = 0;
@@ -277,8 +291,12 @@ function datafield_timetable_getdisplaysingletemplate($content, $categoriesraw) 
     }
 
     $rows = '';
-    foreach ($activities as $activity) {
-        $rows .= datafield_timetable_getactivitytr($activity, $categories);
+    if (!$activities || !count($activities)) {
+        $rows .= datafield_timetable_getemptytr($categories);
+    } else {
+        foreach ($activities as $activity) {
+            $rows .= datafield_timetable_getactivitytr($activity, $categories);
+        }
     }
 
     $thead = html_writer::tag('thead',
