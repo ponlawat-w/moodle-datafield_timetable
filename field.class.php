@@ -56,10 +56,10 @@ class data_field_timetable extends data_field_base {
         $content = $DB->get_record('data_content', ['recordid' => $recordid, 'fieldid' => $this->field->id]);
 
         if ($template == 'listtemplate') {
-            return datafield_timetable_getdisplaylisttemplate($content->content);
+            return datafield_timetable_getdisplaylisttemplate($content);
         }
         if ($template == 'singletemplate') {
-            $html = datafield_timetable_getdisplaysingletemplate($content->content, $this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES});
+            $html = datafield_timetable_getdisplaysingletemplate($content, $this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES});
 
             $record = $DB->get_record('data_records', ['id' => $content->recordid]);
             $data = $DB->get_record('data', ['id' => $record->dataid]);
@@ -68,7 +68,7 @@ class data_field_timetable extends data_field_base {
             }
             $cm = get_coursemodule_from_instance('data', $data->id);
             $context = context_module::instance($cm->id);
-            if (has_capability('mod/data:exportallentries', $context)) {
+            if (has_capability('mod/data:exportallentries', $context) && !optional_param('exporting', false, PARAM_BOOL)) {
                 $user = $DB->get_record('user', ['id' => $record->userid]);
                 $html .= html_writer::tag('p', html_writer::link(
                     new moodle_url('/mod/data/field/timetable/export.php', ['fid' => $this->field->id, 'uid' => $record->userid]),

@@ -30,6 +30,7 @@ $string['exportof'] = 'Export credits of {$a}';
 $string['exportcredits'] = 'Export Data with Credits';
 $string['exporttitle'] = 'Export Data of {$a}';
 $string['exportsettings'] = 'Export Settings';
+$string['exportprintable'] = 'Export my printable data';
 $string['targetuser'] = 'Target User';
 $string['creditcalculation'] = 'Credits Calculation';
 $string['hourpercredit'] = 'Hours per Credit';

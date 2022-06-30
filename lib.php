@@ -251,7 +251,7 @@ function datafield_timetable_getactivitytr($activity, $categories) {
 }
 
 function datafield_timetable_getdisplaylisttemplate($content) {
-    $activities = datafield_timetable_toactivities($content);
+    $activities = datafield_timetable_toactivities($content->content);
     $activitiescount = count($activities);
     if (!$activitiescount) {
         return get_string('empty', 'datafield_timetable');
@@ -278,12 +278,14 @@ function datafield_timetable_getdisplaylisttemplate($content) {
         'to' => Activity::gettimestring($to)
     ]);
 
-    return "{$fromtostr} ({$countstr})";
+    $studentexportbtn = datafield_timetable_getexportprintablebutton($content);
+
+    return "{$fromtostr} ({$countstr}) {$studentexportbtn}";
 }
 
 function datafield_timetable_getdisplaysingletemplate($content, $categoriesraw) {
     $categories = datafield_timetable_getcategories($categoriesraw);
-    $activities = datafield_timetable_toactivities($content);
+    $activities = datafield_timetable_toactivities($content->content);
 
     $categoryths = '';
     foreach ($categories as $category) {
@@ -311,6 +313,8 @@ function datafield_timetable_getdisplaysingletemplate($content, $categoriesraw) 
         'class' => 'table table-bordered datafield_timetable-timetable'
     ]);
 
+    $studentexportbtn = datafield_timetable_getexportprintablebutton($content);
+
     return html_writer::tag('style', '
         .datafield_timetable-timetable {
             width: auto;
@@ -332,8 +336,31 @@ function datafield_timetable_getdisplaysingletemplate($content, $categoriesraw) 
             position: absolute;
             bottom: 5px;
         }
-    ')
-        . $table;
+    ') . $table . $studentexportbtn;
+}
+
+function datafield_timetable_getexportprintablebutton($content) {
+    global $DB, $USER;
+    if (optional_param('exporting', false, PARAM_BOOL)) {
+        return '';
+    }
+
+    if (!$content) {
+        return '';
+    }
+    $record = $DB->get_record('data_records', ['id' => $content->recordid]);
+    if (!$record) { 
+        return '';
+    }
+
+    if ($record->userid == $USER->id) {
+        return html_writer::link(
+            new moodle_url('/mod/data/field/timetable/exportprintable.php', ['dataid' => $record->dataid, 'exporting' => true]),
+            get_string('exportprintable', 'datafield_timetable'),
+            ['class' => 'btn btn-sm btn-success', 'target' => '_blank']
+        );
+    }
+    return '';
 }
 
 function datafield_timetable_getcreditcategories($settings, $type) {
