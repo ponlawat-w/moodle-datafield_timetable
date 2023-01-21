@@ -21,13 +21,13 @@ class data_field_timetable extends data_field_base {
         if (has_capability('mod/data:exportallentries', $modcontext)) {
             $items[] = [
                 'text' => get_string('calculatecredits', 'datafield_timetable'),
-                'url' => (new moodle_url('/mod/data/field/timetable/export.php', ['fid' => $this->field->id]))->out()
+                'url' => (new moodle_url('/mod/data/field/timetable/export.php', ['fid' => $this->field->id]))->out(false)
             ];
         }
         if (has_capability('mod/data:exportownentry', $modcontext)) {
             $items[] = [
                 'text' => get_string('downloadreport', 'datafield_timetable'),
-                'url' => (new moodle_url('/mod/data/field/timetable/exportprintable.php', ['dataid' => $this->field->dataid, 'exporting' => true]))->out()
+                'url' => (new moodle_url('/mod/data/field/timetable/exportprintable.php', ['dataid' => $this->field->dataid, 'exporting' => true]))->out(false)
             ];
         }
         $PAGE->requires->js_init_code('DATAFIELD_TIMETABLE_EXTENDMENU = ' . json_encode($items) . ';', false);
