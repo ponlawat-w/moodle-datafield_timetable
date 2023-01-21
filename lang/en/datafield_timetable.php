@@ -26,11 +26,11 @@ $string['alerttimeinvalid'] = 'Invalid time';
 $string['alerttimeconflicts'] = 'Overlaps with another activity';
 
 $string['export'] = 'Export';
-$string['exportof'] = 'Export credits of {$a}';
 $string['exportcredits'] = 'Export Data with Credits';
 $string['exporttitle'] = 'Export Data of {$a}';
 $string['exportsettings'] = 'Export Settings';
-$string['exportprintable'] = 'Export my printable data';
+$string['calculatecredits'] = 'Calculate credits';
+$string['downloadreport'] = 'Download report';
 $string['targetuser'] = 'Target User';
 $string['creditcalculation'] = 'Credits Calculation';
 $string['hourpercredit'] = 'Hours per Credit';

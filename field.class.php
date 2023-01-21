@@ -9,6 +9,30 @@ class data_field_timetable extends data_field_base {
     public function __construct($field = 0, $data = 0, $cm = 0) {
         parent::__construct($field, $data, $cm);
         $this->copy_icon();
+        $this->init_page();
+    }
+
+    private function init_page() {
+        global $PAGE;
+        $cm = get_coursemodule_from_instance('data', $this->field->dataid);
+        $modcontext = context_module::instance($cm->id);
+
+        $items = [];
+        if (has_capability('mod/data:exportallentries', $modcontext)) {
+            $items[] = [
+                'text' => get_string('calculatecredits', 'datafield_timetable'),
+                'url' => (new moodle_url('/mod/data/field/timetable/export.php', ['fid' => $this->field->id]))->out(false)
+            ];
+        }
+        if (has_capability('mod/data:exportownentry', $modcontext)) {
+            $items[] = [
+                'text' => get_string('downloadreport', 'datafield_timetable'),
+                'url' => (new moodle_url('/mod/data/field/timetable/exportprintable.php', ['dataid' => $this->field->dataid, 'exporting' => true]))->out(false)
+            ];
+        }
+        $PAGE->requires->js_init_code('DATAFIELD_TIMETABLE_EXTENDMENU = ' . json_encode($items) . ';', false);
+        $PAGE->requires->jquery();
+        $PAGE->requires->js('/mod/data/field/timetable/extendmenu.js');
     }
 
     private function copy_icon() {
@@ -59,25 +83,7 @@ class data_field_timetable extends data_field_base {
             return datafield_timetable_getdisplaylisttemplate($content);
         }
         if ($template == 'singletemplate') {
-            $html = datafield_timetable_getdisplaysingletemplate($content, $this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES});
-
-            $record = $DB->get_record('data_records', ['id' => $content->recordid]);
-            $data = $DB->get_record('data', ['id' => $record->dataid]);
-            if (!$data) {
-                return $html;
-            }
-            $cm = get_coursemodule_from_instance('data', $data->id);
-            $context = context_module::instance($cm->id);
-            if (has_capability('mod/data:exportallentries', $context) && !optional_param('exporting', false, PARAM_BOOL)) {
-                $user = $DB->get_record('user', ['id' => $record->userid]);
-                $html .= html_writer::tag('p', html_writer::link(
-                    new moodle_url('/mod/data/field/timetable/export.php', ['fid' => $this->field->id, 'uid' => $record->userid]),
-                    get_string('exportof', 'datafield_timetable', fullname($user)),
-                    ['class' => 'btn btn-success btn-sm']
-                ));
-            }
-
-            return $html;
+            return datafield_timetable_getdisplaysingletemplate($content, $this->field->{DATAFIELD_TIMETABLE_COLUMN_FIELD_CATEGORIES});
         }
 
         return parent::display_browse_field($recordid, $template);
