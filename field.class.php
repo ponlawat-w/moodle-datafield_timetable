@@ -31,7 +31,6 @@ class data_field_timetable extends data_field_base {
             ];
         }
         $PAGE->requires->js_init_code('DATAFIELD_TIMETABLE_EXTENDMENU = ' . json_encode($items) . ';', false);
-        $PAGE->requires->jquery();
         $PAGE->requires->js('/mod/data/field/timetable/extendmenu.js');
     }
 
