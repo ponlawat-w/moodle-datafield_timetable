@@ -12,6 +12,8 @@ if (!$data) {
 }
 require_login($data->course);
 
+define('MOODLE_DATAFIELD_TIMETABLE_EXPORTPRINTABLE', 1);
+
 header('Content-Type: application/vnd.ms-word');
 header('Content-Disposition: attachment; filename=export.doc');
 header('Expires: 0');
