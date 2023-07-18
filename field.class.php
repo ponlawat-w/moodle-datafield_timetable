@@ -13,6 +13,9 @@ class data_field_timetable extends data_field_base {
     }
 
     private function init_page() {
+        /**
+         * @var \moodle_page $PAGE
+         */
         global $PAGE;
         $cm = get_coursemodule_from_instance('data', $this->field->dataid);
         $modcontext = context_module::instance($cm->id);
@@ -31,7 +34,7 @@ class data_field_timetable extends data_field_base {
             ];
         }
         $PAGE->requires->js_init_code('DATAFIELD_TIMETABLE_EXTENDMENU = ' . json_encode($items) . ';', false);
-        $PAGE->requires->js('/mod/data/field/timetable/extendmenu.js');
+        $PAGE->requires->js('/mod/data/field/timetable/extendmenu.js', false);
     }
 
     private function copy_icon() {

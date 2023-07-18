@@ -251,6 +251,9 @@ function datafield_timetable_getactivitytr($activity, $categories) {
 }
 
 function datafield_timetable_getdisplaylisttemplate($content) {
+    if (!$content) {
+        return get_string('none');
+    }
     $activities = datafield_timetable_toactivities($content->content);
     $activitiescount = count($activities);
     if (!$activitiescount) {
@@ -282,6 +285,9 @@ function datafield_timetable_getdisplaylisttemplate($content) {
 }
 
 function datafield_timetable_getdisplaysingletemplate($content, $categoriesraw) {
+    if (!$content) {
+        return get_string('none');
+    }
     $categories = datafield_timetable_getcategories($categoriesraw);
     $activities = datafield_timetable_toactivities($content->content);
 

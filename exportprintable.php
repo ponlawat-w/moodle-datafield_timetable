@@ -1,7 +1,7 @@
 <?php
 
 require_once(__DIR__ . '/../../../../config.php');
-require_once(__DIR__ . '/../../lib.php');
+require_once(__DIR__ . '/../../classes/manager.php');
 require_once(__DIR__ . '/lib.php');
 
 require_login();
@@ -25,8 +25,10 @@ echo html_writer::tag('style', '* { font-family: sans-serif; } table { border-co
 echo html_writer::end_tag('head');
 echo html_writer::start_tag('body');
 $records = $DB->get_records('data_records', ['dataid' => $data->id, 'userid' => $USER->id], 'timecreated ASC');
+$manager = \mod_data\manager::create_from_instance($data);
+$parser = $manager->get_template('singletemplate', ['search' => '', 'page' => 0]);
 foreach ($records as $record) {
-    data_print_template('singletemplate', [$record], $data);
+    echo $parser->parse_entries([$record]);
     echo html_writer::start_tag('hr');
     echo html_writer::start_tag('br', ['style' => 'page-break-before: always;']);
 }
